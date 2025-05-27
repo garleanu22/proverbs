@@ -224,6 +224,15 @@ async function generateExcelFile(
   ];
   
   const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+  
+  // Set column widths for better formatting
+  worksheet['!cols'] = [
+    { width: 10 },  // Page column
+    { width: 12 },  // Proverb # column
+    { width: 80 },  // Text column
+    { width: 50 }   // POS Tags column
+  ];
+  
   XLSX.utils.book_append_sheet(workbook, worksheet, "Proverbs");
   
   // Add code documentation sheet if requested
@@ -251,7 +260,13 @@ async function generateExcelFile(
   }
   
   const outputPath = await generateVersionedFilename(filename);
-  XLSX.writeFile(workbook, outputPath);
+  
+  // Write with proper Excel format options
+  XLSX.writeFile(workbook, outputPath, {
+    bookType: 'xlsx',
+    compression: true,
+    type: 'file'
+  });
   
   return outputPath;
 }
