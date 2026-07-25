@@ -1,0 +1,41 @@
+name: Build Editorial News Importer
+
+on:
+  push:
+    branches:
+      - chatgpt-artifact-build
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate PHP syntax
+        run: find editorial-news-importer-global -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Validate plugin structure
+        run: |
+          test -f editorial-news-importer-global/editorial-news-importer-global.php
+          test -f editorial-news-importer-global/includes/catalog.php
+          grep -q 'Version: 3.3.0' editorial-news-importer-global/editorial-news-importer-global.php
+          grep -q 'Stable tag: 3.3.0' editorial-news-importer-global/readme.txt
+
+      - name: Build and test ZIP
+        run: |
+          zip -r editorial-news-importer-global-3.3.0.zip editorial-news-importer-global
+          unzip -t editorial-news-importer-global-3.3.0.zip
+          mkdir -p artifact
+          cp editorial-news-importer-global-3.3.0.zip artifact/
+
+      - name: Upload plugin ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: editorial-news-importer-global-3.3.0
+          path: artifact/editorial-news-importer-global-3.3.0.zip
+          if-no-files-found: error
+          retention-days: 1
