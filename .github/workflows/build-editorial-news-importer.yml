@@ -30,15 +30,15 @@ jobs:
 
       - name: Build and test ZIP
         run: |
-          zip -r editorial-news-importer-global-3.3.0.zip editorial-news-importer-global
-          unzip -t editorial-news-importer-global-3.3.0.zip
+          zip -r /tmp/editorial-news-importer-global-3.3.0.zip editorial-news-importer-global
+          unzip -t /tmp/editorial-news-importer-global-3.3.0.zip
           mkdir -p artifact
-          cp editorial-news-importer-global-3.3.0.zip artifact/
+          cp -R editorial-news-importer-global artifact/
 
-      - name: Upload plugin ZIP
+      - name: Upload installable plugin archive
         uses: actions/upload-artifact@v4
         with:
-          name: editorial-news-importer-global-3.3.0
-          path: artifact/editorial-news-importer-global-3.3.0.zip
+          name: editorial-news-importer-global-3.3.0-installable
+          path: artifact/
           if-no-files-found: error
           retention-days: 1
